@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: group-9
+  labels:
+    name: group-9
+    environment: production
+    app.kubernetes.io/part-of: budgetwatch
+    app.kubernetes.io/instance: group-9

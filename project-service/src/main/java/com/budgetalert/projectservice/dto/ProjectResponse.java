@@ -1,0 +1,3 @@
+package com.budgetalert.projectservice.dto;
+import com.budgetalert.projectservice.model.ProjectStatus; import lombok.*; import java.time.LocalDateTime; import java.util.*;
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor public class ProjectResponse { private String id; private String name; private String description; private String category; private String cloudProvider; private Double monthlyBudget; private Double annualBudget; private String ownerEmail; private ProjectStatus status; private LocalDateTime createdAt; private List<ResourceResponse> resources; }

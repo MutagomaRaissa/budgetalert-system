@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+  namespace: group-9
+  labels:
+    app: consul
+    app.kubernetes.io/name: consul
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  selector:
+    app: consul
+    app.kubernetes.io/name: consul
+    app.kubernetes.io/instance: group-9
+  ports:
+    - name: http
+      port: 8500
+      targetPort: 8500
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: group-9
+  labels:
+    app: rabbitmq
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  selector:
+    app: rabbitmq
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: group-9
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: management
+      port: 15672
+      targetPort: 15672
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-ui
+  namespace: group-9
+  labels:
+    app: dashboard-ui
+    app.kubernetes.io/name: dashboard-ui
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  selector:
+    app: dashboard-ui
+    app.kubernetes.io/name: dashboard-ui
+    app.kubernetes.io/instance: group-9
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

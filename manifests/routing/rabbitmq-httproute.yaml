@@ -1,0 +1,42 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: rabbitmq-httproute
+  namespace: group-9
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: shared-gateway
+      namespace: default
+      sectionName: https
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /group-9/rabbitmq
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Host
+                value: 130.192.100.243/group-9
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Forwarded-Prefix
+                value: /group-9/rabbitmq
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: rabbitmq
+          port: 15672
+          weight: 1

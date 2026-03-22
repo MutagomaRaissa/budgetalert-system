@@ -1,0 +1,19 @@
+.idea/
+**/.idea/
+
+# Java / Maven
+**/target/
+*.log
+
+# Node / frontend
+**/node_modules/
+**/dist/
+**/.vite/
+
+# Local env / OS noise
+.env.prod
+.DS_Store
+Thumbs.db
+
+# Local backups
+budgetwatch-system/backups/
