@@ -10,7 +10,8 @@ spring:
         health-check-path: /actuator/health
         health-check-interval: 10s
         enabled: true
-        prefer-ip-address: true
+        prefer-ip-address: ${SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS:false}
+        hostname: ${SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME:${spring.application.name}}
     gateway:
       routes:
         - id: auth-service

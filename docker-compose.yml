@@ -25,8 +25,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-password}
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping || exit 1"]
       interval: 10s
@@ -44,14 +44,14 @@ services:
   project-db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: project_db
-      POSTGRES_USER: project_user
-      POSTGRES_PASSWORD: project_password
+      POSTGRES_DB: ${PROJECT_DB_NAME:-project_db}
+      POSTGRES_USER: ${PROJECT_DB_USER:-project_user}
+      POSTGRES_PASSWORD: ${PROJECT_DB_PASSWORD:-password}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - project_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U project_user -d project_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${PROJECT_DB_USER:-project_user} -d ${PROJECT_DB_NAME:-project_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -65,14 +65,14 @@ services:
   coverage-db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: coverage_db
-      POSTGRES_USER: coverage_user
-      POSTGRES_PASSWORD: coverage_password
+      POSTGRES_DB: ${COVERAGE_DB_NAME:-coverage_db}
+      POSTGRES_USER: ${COVERAGE_DB_USER:-coverage_user}
+      POSTGRES_PASSWORD: ${COVERAGE_DB_PASSWORD:-password}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - coverage_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U coverage_user -d coverage_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${COVERAGE_DB_USER:-coverage_user} -d ${COVERAGE_DB_NAME:-coverage_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -86,14 +86,14 @@ services:
   alert-db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: alert_db
-      POSTGRES_USER: alert_user
-      POSTGRES_PASSWORD: alert_password
+      POSTGRES_DB: ${ALERT_DB_NAME:-alert_db}
+      POSTGRES_USER: ${ALERT_DB_USER:-alert_user}
+      POSTGRES_PASSWORD: ${ALERT_DB_PASSWORD:-password}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - alert_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U alert_user -d alert_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${ALERT_DB_USER:-alert_user} -d ${ALERT_DB_NAME:-alert_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -112,13 +112,13 @@ services:
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: project-service
       APP_JWT_SECRET: ${APP_JWT_SECRET}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/project_db
-      SPRING_DATASOURCE_USERNAME: project_user
-      SPRING_DATASOURCE_PASSWORD: project_password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/${PROJECT_DB_NAME:-project_db}
+      SPRING_DATASOURCE_USERNAME: ${PROJECT_DB_USER:-project_user}
+      SPRING_DATASOURCE_PASSWORD: ${PROJECT_DB_PASSWORD:-password}
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SERVER_PORT: 8081
-      SPRINGDOC_SERVER_URL: ${PUBLIC_BASE_URL:-http://localhost:5173/group-9}
+      SPRINGDOC_SERVER_URL: ${SWAGGER_BASE_URL:-http://localhost:8080}
     ports:
       - "8081:8081"
     depends_on:
@@ -146,17 +146,17 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: coverage-service
-      SPRING_DATASOURCE_URL: jdbc:postgresql://coverage-db:5432/coverage_db
-      SPRING_DATASOURCE_USERNAME: coverage_user
-      SPRING_DATASOURCE_PASSWORD: coverage_password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://coverage-db:5432/${COVERAGE_DB_NAME:-coverage_db}
+      SPRING_DATASOURCE_USERNAME: ${COVERAGE_DB_USER:-coverage_user}
+      SPRING_DATASOURCE_PASSWORD: ${COVERAGE_DB_PASSWORD:-password}
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: admin
-      SPRING_RABBITMQ_PASSWORD: admin
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER:-admin}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-password}
       SERVER_PORT: 8082
-      SPRINGDOC_SERVER_URL: ${PUBLIC_BASE_URL:-http://localhost:5173/group-9}
+      SPRINGDOC_SERVER_URL: ${SWAGGER_BASE_URL:-http://localhost:8080}
     ports:
       - "8082:8082"
     depends_on:
@@ -189,17 +189,17 @@ services:
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: alert-service
       APP_JWT_SECRET: ${APP_JWT_SECRET}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://alert-db:5432/alert_db
-      SPRING_DATASOURCE_USERNAME: alert_user
-      SPRING_DATASOURCE_PASSWORD: alert_password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://alert-db:5432/${ALERT_DB_NAME:-alert_db}
+      SPRING_DATASOURCE_USERNAME: ${ALERT_DB_USER:-alert_user}
+      SPRING_DATASOURCE_PASSWORD: ${ALERT_DB_PASSWORD:-password}
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: admin
-      SPRING_RABBITMQ_PASSWORD: admin
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER:-admin}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-password}
       SERVER_PORT: 8083
-      SPRINGDOC_SERVER_URL: ${PUBLIC_BASE_URL:-http://localhost:5173/group-9}
+      SPRINGDOC_SERVER_URL: ${SWAGGER_BASE_URL:-http://localhost:8080}
     ports:
       - "8083:8083"
     depends_on:
@@ -232,7 +232,7 @@ services:
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SERVER_PORT: 8080
-      SWAGGER_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:5173/group-9}
+      SWAGGER_BASE_URL: ${SWAGGER_BASE_URL:-http://localhost:8080}
     ports:
       - "8080:8080"
     depends_on:

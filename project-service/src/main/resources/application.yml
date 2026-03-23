@@ -4,7 +4,7 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/project_db}
     username: ${SPRING_DATASOURCE_USERNAME:project_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:project_password}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -19,7 +19,8 @@ spring:
         health-check-path: /actuator/health
         health-check-interval: 10s
         enabled: true
-        prefer-ip-address: true
+        prefer-ip-address: ${SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS:false}
+        hostname: ${SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME:${spring.application.name}}
 server:
   port: ${SERVER_PORT:8081}
 springdoc:

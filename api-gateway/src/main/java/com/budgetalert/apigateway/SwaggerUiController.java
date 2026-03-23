@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,16 +20,31 @@ public class SwaggerUiController {
   private final ObjectMapper objectMapper;
   private final WebClient webClient;
   private final int serverPort;
+  private final String swaggerBaseUrl;
 
-  public SwaggerUiController(ObjectMapper objectMapper, @Value("${server.port:8080}") int serverPort) {
+  public SwaggerUiController(
+      ObjectMapper objectMapper,
+      @Value("${server.port:8080}") int serverPort,
+      @Value("${SWAGGER_BASE_URL:http://localhost:8080}") String swaggerBaseUrl) {
     this.objectMapper = objectMapper;
     this.serverPort = serverPort;
+    this.swaggerBaseUrl = swaggerBaseUrl;
     this.webClient = WebClient.builder().baseUrl("http://127.0.0.1:" + serverPort).build();
   }
 
-  @GetMapping(value = {"/swagger-ui.html", "/docs"}, produces = MediaType.TEXT_HTML_VALUE)
+  @GetMapping(value = {"/swagger-ui.html", "/docs", "/swagger"}, produces = MediaType.TEXT_HTML_VALUE)
   @ResponseBody
-  public ResponseEntity<String> swaggerUi() {
+  public ResponseEntity<String> swaggerUi(ServerHttpRequest request) {
+    String forwardedPrefix = request.getHeaders().getFirst("X-Forwarded-Prefix");
+    if (forwardedPrefix == null) {
+      forwardedPrefix = "";
+    }
+
+    String requestPath = request.getURI().getPath();
+    String docsBasePath = requestPath.endsWith("/swagger")
+        ? forwardedPrefix + "/swagger"
+        : forwardedPrefix;
+
     String html = """
         <!DOCTYPE html>
         <html lang="en">
@@ -51,9 +67,9 @@ public class SwaggerUiController {
             window.onload = function () {
               window.ui = SwaggerUIBundle({
                 urls: [
-                  { url: "/gateway-docs/project", name: "project-service" },
-                  { url: "/gateway-docs/coverage", name: "coverage-service" },
-                  { url: "/gateway-docs/alert", name: "alert-service" }
+                  { url: "%s/gateway-docs/project", name: "project-service" },
+                  { url: "%s/gateway-docs/coverage", name: "coverage-service" },
+                  { url: "%s/gateway-docs/alert", name: "alert-service" }
                 ],
                 "urls.primaryName": "project-service",
                 dom_id: "#swagger-ui",
@@ -70,14 +86,14 @@ public class SwaggerUiController {
           </script>
         </body>
         </html>
-        """;
+        """.formatted(docsBasePath, docsBasePath, docsBasePath);
 
     return ResponseEntity.ok()
         .contentType(MediaType.TEXT_HTML)
         .body(html);
   }
 
-  @GetMapping(value = "/gateway-docs/{service}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = {"/gateway-docs/{service}", "/swagger/gateway-docs/{service}"}, produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public Mono<ResponseEntity<String>> gatewayDocs(@PathVariable String service) {
     String upstreamPath = switch (service) {
@@ -97,7 +113,7 @@ public class SwaggerUiController {
             if (jsonNode instanceof ObjectNode rootNode) {
               ArrayNode servers = objectMapper.createArrayNode();
               ObjectNode server = objectMapper.createObjectNode();
-              server.put("url", "http://localhost:" + serverPort);
+              server.put("url", swaggerBaseUrl);
               server.put("description", "API Gateway");
               servers.add(server);
               rootNode.set("servers", servers);
