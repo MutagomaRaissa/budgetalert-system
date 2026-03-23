@@ -10,5 +10,6 @@ import lombok.*;
     private String ownerEmail; 
     private String category; 
     private Double monthlyBudget; 
-    private Double forecastCost; private Double usagePercentage; 
+    private Double forecastCost; 
+    private Double usagePercentage; 
     private String severity; }
