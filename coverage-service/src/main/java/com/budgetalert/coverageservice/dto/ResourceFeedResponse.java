@@ -1,1 +1,15 @@
-package com.budgetalert.coverageservice.dto; import lombok.*; @Getter @Setter public class ResourceFeedResponse { private String id; private String resourceType; private String vmSku; private Integer vcpu; private Integer ramGb; private String computeUsagePattern; private Integer customHoursPerMonth; private String storageTier; private Integer storageGb; private Integer monthlyEgressGb; private Boolean active; }
+package com.budgetalert.coverageservice.dto; 
+import lombok.*; 
+@Getter @Setter 
+  public class ResourceFeedResponse {
+    private String id; 
+    private String resourceType; 
+    private String vmSku; 
+    private Integer vcpu; 
+    private Integer ramGb;
+    private String computeUsagePattern; 
+    private Integer customHoursPerMonth; 
+    private String storageTier;
+    private Integer storageGb; 
+    private Integer monthlyEgressGb;
+    private Boolean active; }
