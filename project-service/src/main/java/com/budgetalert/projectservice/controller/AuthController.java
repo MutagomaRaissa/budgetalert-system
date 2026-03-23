@@ -1,5 +1,9 @@
 package com.budgetalert.projectservice.controller;
-import com.budgetalert.projectservice.dto.*; import com.budgetalert.projectservice.service.AuthService; import jakarta.validation.Valid; import lombok.RequiredArgsConstructor; import org.springframework.web.bind.annotation.*;
+import com.budgetalert.projectservice.dto.*; 
+import com.budgetalert.projectservice.service.AuthService; 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor; 
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/api/v1/auth")
