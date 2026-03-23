@@ -1,3 +1,14 @@
 package com.budgetalert.projectservice.dto;
 import com.budgetalert.projectservice.model.*; import jakarta.validation.constraints.NotNull; import lombok.*;
-@Getter @Setter public class CreateResourceRequest { @NotNull private ResourceType resourceType; private String vmSku; private Integer vcpu; private Integer ramGb; private ComputeUsagePattern computeUsagePattern; private Integer customHoursPerMonth; private String storageTier; private Integer storageGb; private Integer monthlyEgressGb; private Boolean active; }
+@Getter @Setter
+  public class CreateResourceRequest { 
+    @NotNull private ResourceType resourceType;
+    private String vmSku; 
+    private Integer vcpu;
+    private Integer ramGb; 
+    private ComputeUsagePattern computeUsagePattern;
+    private Integer customHoursPerMonth;
+    private String storageTier; 
+    private Integer storageGb;
+    private Integer monthlyEgressGb; 
+    private Boolean active; }
