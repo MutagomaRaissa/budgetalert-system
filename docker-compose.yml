@@ -25,8 +25,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping || exit 1"]
       interval: 10s
@@ -86,14 +86,14 @@ services:
   alert-db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: alert-db
-      POSTGRES_USER: alert-user
-      POSTGRES_PASSWORD: alert-password
+      POSTGRES_DB: alert_db
+      POSTGRES_USER: alert_user
+      POSTGRES_PASSWORD: alert_password
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - alert_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${ALERT_DB_USER:-alert_user} -d ${ALERT_DB_NAME:-alert_db}"]
+      test: ["CMD-SHELL", "pg_isready -U alert_user -d alert_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -112,9 +112,9 @@ services:
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: project-service
       APP_JWT_SECRET: ${APP_JWT_SECRET}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/project-db
-      SPRING_DATASOURCE_USERNAME: project-user
-      SPRING_DATASOURCE_PASSWORD: project-password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/project_db
+      SPRING_DATASOURCE_USERNAME: project_user
+      SPRING_DATASOURCE_PASSWORD: project_password
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SERVER_PORT: 8081
@@ -146,15 +146,15 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: coverage-service
-      SPRING_DATASOURCE_URL: jdbc:postgresql://coverage-db:5432/coverage-db
-      SPRING_DATASOURCE_USERNAME: coverage-user
-      SPRING_DATASOURCE_PASSWORD: coverage-password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://coverage-db:5432/coverage_db
+      SPRING_DATASOURCE_USERNAME: coverage_user
+      SPRING_DATASOURCE_PASSWORD: coverage_password
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER:-admin}
-      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
       SERVER_PORT: 8082
       SPRINGDOC_SERVER_URL: ${PUBLIC_BASE_URL:-http://localhost:5173/group-9}
     ports:
@@ -189,15 +189,15 @@ services:
       SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: alert-service
       APP_JWT_SECRET: ${APP_JWT_SECRET}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://alert-db:5432/alert-db
-      SPRING_DATASOURCE_USERNAME: alert-user
-      SPRING_DATASOURCE_PASSWORD: alert-password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://alert-db:5432/alert_db
+      SPRING_DATASOURCE_USERNAME: alert_user
+      SPRING_DATASOURCE_PASSWORD: alert_password
       CONSUL_HOST: consul
       CONSUL_PORT: 8500
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER:-admin}
-      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
       SERVER_PORT: 8083
       SPRINGDOC_SERVER_URL: ${PUBLIC_BASE_URL:-http://localhost:5173/group-9}
     ports:
