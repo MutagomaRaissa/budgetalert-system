@@ -1,5 +1,11 @@
 package com.budgetalert.projectservice.exception;
-import jakarta.servlet.http.HttpServletRequest; import org.springframework.http.*; import org.springframework.validation.FieldError; import org.springframework.web.bind.MethodArgumentNotValidException; import org.springframework.web.bind.annotation.*; import java.time.LocalDateTime; import java.util.stream.Collectors;
+import jakarta.servlet.http.HttpServletRequest; 
+import org.springframework.http.*; 
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException; 
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime; 
+import java.util.stream.Collectors;
 @RestControllerAdvice public class GlobalExceptionHandler {
  @ExceptionHandler(ResourceNotFoundException.class) public ResponseEntity<ApiErrorResponse> nf(ResourceNotFoundException ex,HttpServletRequest r){return build(HttpStatus.NOT_FOUND,ex.getMessage(),r.getRequestURI());}
  @ExceptionHandler({BadRequestException.class,IllegalArgumentException.class}) public ResponseEntity<ApiErrorResponse> br(RuntimeException ex,HttpServletRequest r){return build(HttpStatus.BAD_REQUEST,ex.getMessage(),r.getRequestURI());}
