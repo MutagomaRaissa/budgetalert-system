@@ -1,6 +1,15 @@
 package com.budgetalert.projectservice.service;
-import com.budgetalert.projectservice.dto.*; import com.budgetalert.projectservice.exception.BadRequestException; import com.budgetalert.projectservice.model.*; import com.budgetalert.projectservice.repository.UserRepository; import com.budgetalert.projectservice.security.JwtService; import lombok.RequiredArgsConstructor; import org.springframework.security.crypto.password.PasswordEncoder; import org.springframework.stereotype.Service; import java.time.LocalDateTime;
-@Service @RequiredArgsConstructor public class AuthService {
+import com.budgetalert.projectservice.dto.*; 
+import com.budgetalert.projectservice.exception.BadRequestException; 
+import com.budgetalert.projectservice.model.*; 
+import com.budgetalert.projectservice.repository.UserRepository;
+import com.budgetalert.projectservice.security.JwtService;
+import lombok.RequiredArgsConstructor; 
+import org.springframework.security.crypto.password.PasswordEncoder; 
+import org.springframework.stereotype.Service; 
+import java.time.LocalDateTime;
+@Service @RequiredArgsConstructor 
+ public class AuthService {
  private final UserRepository userRepository;
  private final PasswordEncoder passwordEncoder;
  private final JwtService jwtService;
@@ -18,5 +27,7 @@ import com.budgetalert.projectservice.dto.*; import com.budgetalert.projectservi
  }
  public AuthResponse login(LoginRequest request)
  {
-     User user=userRepository.findByEmail(request.getEmail()).orElseThrow(()->new BadRequestException("Invalid credentials")); if(!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) throw new BadRequestException("Invalid credentials"); return jwtService.generateAuthResponse(user); }
+     User user=userRepository.findByEmail(request.getEmail()).orElseThrow(()->new BadRequestException("Invalid credentials")); 
+  if(!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) throw new BadRequestException("Invalid credentials"); 
+  return jwtService.generateAuthResponse(user); }
 }
