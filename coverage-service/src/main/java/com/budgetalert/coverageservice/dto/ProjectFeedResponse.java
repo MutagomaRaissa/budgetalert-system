@@ -1,1 +1,13 @@
-package com.budgetalert.coverageservice.dto; import lombok.*; import java.util.*; @Getter @Setter public class ProjectFeedResponse { private String id; private String name; private String category; private String cloudProvider; private Double monthlyBudget; private String ownerEmail; private List<ResourceFeedResponse> resources; }
+package com.budgetalert.coverageservice.dto; 
+import lombok.*; 
+import java.util.*; 
+@Getter @Setter 
+  public class ProjectFeedResponse { 
+    private String id;
+    private String name;
+    private String category; 
+    private String cloudProvider; 
+    private Double monthlyBudget;
+    private String ownerEmail;
+    private List<ResourceFeedResponse> resources;
+  }
