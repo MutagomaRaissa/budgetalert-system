@@ -1,3 +1,16 @@
 package com.budgetalert.projectservice.dto;
-import com.budgetalert.projectservice.model.*; import lombok.*;
-@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor public class ResourceResponse { private String id; private ResourceType resourceType; private String vmSku; private Integer vcpu; private Integer ramGb; private ComputeUsagePattern computeUsagePattern; private Integer customHoursPerMonth; private String storageTier; private Integer storageGb; private Integer monthlyEgressGb; private Boolean active; }
+import com.budgetalert.projectservice.model.*;
+import lombok.*;
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor 
+  public class ResourceResponse {
+    private String id; 
+    private ResourceType resourceType; 
+    private String vmSku; 
+    private Integer vcpu;
+    private Integer ramGb; 
+    private ComputeUsagePattern computeUsagePattern; 
+    private Integer customHoursPerMonth; 
+    private String storageTier; 
+    private Integer storageGb; 
+    private Integer monthlyEgressGb; 
+    private Boolean active; }
