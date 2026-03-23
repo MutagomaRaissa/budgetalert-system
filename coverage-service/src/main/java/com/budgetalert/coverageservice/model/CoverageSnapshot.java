@@ -1,4 +1,32 @@
 package com.budgetalert.coverageservice.model;
-import jakarta.persistence.*; import lombok.*; import java.time.LocalDate;
-@Entity @Table(name="coverage_snapshots") @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder public class CoverageSnapshot {
- @Id @GeneratedValue(strategy = GenerationType.UUID) private String id; @Column(nullable=false) private String projectId; @Column(nullable=false) private String projectName; @Column(nullable=false) private String ownerEmail; @Column(nullable=false) private String category; @Column(nullable=false) private LocalDate snapshotDate; @Column(nullable=false) private Double dailyCost; @Column(nullable=false) private Double monthToDateCost; @Column(nullable=false) private Double forecastCost; @Column(nullable=false) private Double monthlyBudget; @Column(nullable=false) private Double budgetUsagePercentage; @Column(nullable=false) private String severity; }
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDate;
+@Entity @Table(name="coverage_snapshots") 
+ @Getter @Setter @NoArgsConstructor @AllArgsConstructor 
+ @Builder 
+ public class CoverageSnapshot {
+ @Id @GeneratedValue(strategy = GenerationType.UUID) 
+  private String id;
+  @Column(nullable=false) 
+  private String projectId;
+  @Column(nullable=false)
+  private String projectName;
+  @Column(nullable=false) 
+  private String ownerEmail; 
+  @Column(nullable=false)
+  private String category;
+  @Column(nullable=false) 
+  private LocalDate snapshotDate; 
+  @Column(nullable=false) 
+  private Double dailyCost;
+  @Column(nullable=false) 
+  private Double monthToDateCost; 
+  @Column(nullable=false) 
+  private Double forecastCost;
+  @Column(nullable=false) 
+  private Double monthlyBudget;
+  @Column(nullable=false) 
+  private Double budgetUsagePercentage;
+  @Column(nullable=false)
+  private String severity; }
