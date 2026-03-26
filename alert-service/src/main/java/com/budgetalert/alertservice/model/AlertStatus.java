@@ -1,1 +1,0 @@
-package com.budgetalert.alertservice.model; public enum AlertStatus { NEW, READ }
