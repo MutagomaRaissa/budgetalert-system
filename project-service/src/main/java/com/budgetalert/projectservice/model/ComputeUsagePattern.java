@@ -1,1 +1,4 @@
-package com.budgetalert.projectservice.model; public enum ComputeUsagePattern { ALWAYS_ON, BUSINESS_HOURS, CUSTOM }
+package com.budgetalert.projectservice.model; 
+public enum ComputeUsagePattern { 
+  ALWAYS_ON, BUSINESS_HOURS, CUSTOM 
+}
