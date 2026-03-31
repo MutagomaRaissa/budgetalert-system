@@ -1,7 +1,14 @@
 package com.budgetalert.projectservice.dto;
-import com.budgetalert.projectservice.model.ProjectStatus; import lombok.*; import java.time.LocalDateTime; import java.util.*;
-@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor 
-  public class ProjectResponse { 
+import com.budgetalert.projectservice.model.ProjectStatus; 
+import lombok.*; 
+import java.time.LocalDateTime;
+import java.util.*;
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor 
+public class ProjectResponse { 
   private String id; 
   private String name;
   private String description; 
@@ -12,4 +19,5 @@ import com.budgetalert.projectservice.model.ProjectStatus; import lombok.*; impo
     private String ownerEmail; 
     private ProjectStatus status; 
     private LocalDateTime createdAt;
-    private List<ResourceResponse> resources; }
+    private List<ResourceResponse> resources; 
+}
