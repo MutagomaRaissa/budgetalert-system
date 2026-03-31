@@ -16,8 +16,10 @@ import java.util.Date;
  private final long expirationMs;
  private SecretKey key;
  public JwtService(
-         @Value("${app.jwt.secret}") String secret,
-         @Value("${app.jwt.expiration-ms:86400000}") long expirationMs
+  @Value("${app.jwt.secret}") 
+  String secret,
+  @Value("${app.jwt.expiration-ms:86400000}") 
+  long expirationMs
  ) {
      this.secret = secret;
      this.expirationMs = expirationMs;
@@ -32,6 +34,10 @@ import java.util.Date;
  public AuthResponse generateAuthResponse(User user) {
      return new AuthResponse(generateToken(user.getId(), user.getEmail(), user.getRole().name()), "Bearer", expirationMs / 1000);
  }
- public String generateToken(String userId,String email,String role){ return Jwts.builder().subject(email).claim("userId",userId).claim("role",role).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis()+expirationMs)).signWith(key).compact(); }
- public Claims parse(String token){ return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload(); }
+ public String generateToken(String userId,String email,String role){ 
+  return Jwts.builder().subject(email).claim("userId",userId).claim("role",role).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis()+expirationMs)).signWith(key).compact();
+ }
+ public Claims parse(String token){ 
+  return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload(); 
+ }
 }
