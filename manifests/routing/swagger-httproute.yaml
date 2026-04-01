@@ -18,6 +18,31 @@ spec:
     - matches:
         - path:
             type: PathPrefix
+            value: /group-9/gateway-docs
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /gateway-docs
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Host
+                value: 130.192.100.243/group-9
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Forwarded-Prefix
+                value: /group-9
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: api-gateway
+          port: 8080
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
             value: /group-9/swagger-ui.html
       filters:
         - type: URLRewrite

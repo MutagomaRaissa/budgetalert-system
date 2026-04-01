@@ -29,7 +29,7 @@ spec:
       containers:
         - name: project-service
           image: docker.io/rmutagoma/budgetwatch-project-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
               name: http
@@ -106,7 +106,7 @@ spec:
       containers:
         - name: coverage-service
           image: docker.io/rmutagoma/budgetwatch-coverage-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
               name: http
@@ -183,7 +183,7 @@ spec:
       containers:
         - name: alert-service
           image: docker.io/rmutagoma/budgetwatch-alert-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8083
               name: http
@@ -262,7 +262,7 @@ spec:
       containers:
         - name: api-gateway
           image: docker.io/rmutagoma/budgetwatch-api-gateway:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: http

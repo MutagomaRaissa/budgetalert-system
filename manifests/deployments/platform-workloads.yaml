@@ -102,13 +102,13 @@ spec:
               command: ["rabbitmq-diagnostics", "-q", "ping"]
             initialDelaySeconds: 90
             periodSeconds: 10
-            timeoutSeconds: 10
+            timeoutSeconds: 20
           livenessProbe:
             exec:
               command: ["rabbitmq-diagnostics", "-q", "ping"]
             initialDelaySeconds: 120
             periodSeconds: 30
-            timeoutSeconds: 10
+            timeoutSeconds: 20
           resources:
             requests:
               memory: "512Mi"
@@ -155,7 +155,7 @@ spec:
       containers:
         - name: dashboard-ui
           image: docker.io/rmutagoma/budgetwatch-dashboard-ui:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               name: http
