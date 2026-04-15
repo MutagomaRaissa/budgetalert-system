@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-ui
+  namespace: group-9
+  labels:
+    app.kubernetes.io/name: dashboard-ui
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dashboard-ui
+      app.kubernetes.io/name: dashboard-ui
+      app.kubernetes.io/instance: group-9
+  template:
+    metadata:
+      labels:
+        app: dashboard-ui
+        app.kubernetes.io/name: dashboard-ui
+        app.kubernetes.io/instance: group-9
+    spec:
+      containers:
+        - name: dashboard-ui
+          image: docker.io/rmutagoma/budgetwatch-dashboard-ui:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
