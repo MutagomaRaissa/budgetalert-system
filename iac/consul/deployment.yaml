@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul
+  namespace: group-9
+  labels:
+    app.kubernetes.io/name: consul
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul
+      app.kubernetes.io/name: consul
+      app.kubernetes.io/instance: group-9
+  template:
+    metadata:
+      labels:
+        app: consul
+        app.kubernetes.io/name: consul
+        app.kubernetes.io/instance: group-9
+    spec:
+      containers:
+        - name: consul
+          image: hashicorp/consul:1.19
+          imagePullPolicy: IfNotPresent
+          command: ["consul", "agent", "-dev", "-client=0.0.0.0"]
+          ports:
+            - containerPort: 8500
+              name: http
+          envFrom:
+            - configMapRef:
+                name: consul-config
+          readinessProbe:
+            httpGet:
+              path: /v1/status/leader
+              port: 8500
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /v1/status/leader
+              port: 8500
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
