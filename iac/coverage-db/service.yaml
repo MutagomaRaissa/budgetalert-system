@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coverage-db
+  namespace: group-9
+  labels:
+    app: coverage-db
+    app.kubernetes.io/name: coverage-db
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  clusterIP: None
+  selector:
+    app: coverage-db
+    app.kubernetes.io/name: coverage-db
+    app.kubernetes.io/instance: group-9
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
