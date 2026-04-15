@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: alert-db
+  namespace: group-9
+  labels:
+    app.kubernetes.io/name: alert-db
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  serviceName: alert-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-db
+      app.kubernetes.io/name: alert-db
+      app.kubernetes.io/instance: group-9
+  template:
+    metadata:
+      labels:
+        app: alert-db
+        app.kubernetes.io/name: alert-db
+        app.kubernetes.io/instance: group-9
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+              name: postgres
+          envFrom:
+            - configMapRef:
+                name: alert-db-config
+            - secretRef:
+                name: alert-db-secret
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "alert_user", "-d", "alert_db"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "alert_user", "-d", "alert_db"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        storageClassName: csi-cinder-fast
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
