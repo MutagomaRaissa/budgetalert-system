@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coverage-service
+  namespace: group-9
+  labels:
+    app.kubernetes.io/name: coverage-service
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: coverage-service
+      app.kubernetes.io/name: coverage-service
+      app.kubernetes.io/instance: group-9
+  template:
+    metadata:
+      labels:
+        app: coverage-service
+        app.kubernetes.io/name: coverage-service
+        app.kubernetes.io/instance: group-9
+    spec:
+      containers:
+        - name: coverage-service
+          image: docker.io/rmutagoma/budgetwatch-coverage-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8082
+              name: http
+          env:
+            - name: SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: coverage-service-config
+            - secretRef:
+                name: coverage-service-secret
+            - secretRef:
+                name: rabbitmq-secret
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8082
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            timeoutSeconds: 10
+          resources:
+            requests:
+              memory: "768Mi"
+              cpu: "300m"
+            limits:
+              memory: "1536Mi"
+              cpu: "750m"
