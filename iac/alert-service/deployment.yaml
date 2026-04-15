@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-service
+  namespace: group-9
+  labels:
+    app.kubernetes.io/name: alert-service
+    app.kubernetes.io/instance: group-9
+    app.kubernetes.io/part-of: budgetwatch
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: alert-service
+      app.kubernetes.io/name: alert-service
+      app.kubernetes.io/instance: group-9
+  template:
+    metadata:
+      labels:
+        app: alert-service
+        app.kubernetes.io/name: alert-service
+        app.kubernetes.io/instance: group-9
+    spec:
+      containers:
+        - name: alert-service
+          image: docker.io/rmutagoma/budgetwatch-alert-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8083
+              name: http
+          env:
+            - name: SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: alert-service-config
+            - secretRef:
+                name: alert-service-secret
+            - secretRef:
+                name: rabbitmq-secret
+            - secretRef:
+                name: jwt-secret
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8083
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8083
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            timeoutSeconds: 10
+          resources:
+            requests:
+              memory: "768Mi"
+              cpu: "300m"
+            limits:
+              memory: "1536Mi"
+              cpu: "750m"
