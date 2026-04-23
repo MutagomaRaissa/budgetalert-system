@@ -11,7 +11,7 @@ spec:
         repoURL: https://github.com/MutagomaRaissa/budgetalert-system.git
         revision: iac
         directories:
-          - path: "./iac/*"
+          - path: "iac/*"
   template:
     metadata:
       name: "budgetalert-{{path.basename}}"
@@ -35,4 +35,5 @@ spec:
           prune: true
         syncOptions:
           - ApplyOutOfSyncOnly=true
+          - CreateNamespace=true
           - ServerSideApply=true
