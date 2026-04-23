@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: group-9
     app.kubernetes.io/part-of: budgetwatch
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
