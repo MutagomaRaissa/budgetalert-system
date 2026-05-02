@@ -24,6 +24,13 @@ spec:
         path: "{{chartPath}}"
         helm:
           releaseName: budgetwatch
+      ignoreDifferences:
+        - group: apps
+          kind: StatefulSet
+          jqPathExpressions:
+            - .spec.volumeClaimTemplates[]?.apiVersion
+            - .spec.volumeClaimTemplates[]?.kind
+            - .spec.volumeClaimTemplates[]?.status
       destination:
         server: https://kubernetes.default.svc
         namespace: group-9
