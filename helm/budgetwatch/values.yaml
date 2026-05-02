@@ -32,6 +32,14 @@ project-db:
 
 project-service:
   enabled: true
+  replicaCount: 1
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
 
 rabbitmq:
   enabled: true
