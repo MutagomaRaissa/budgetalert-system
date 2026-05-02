@@ -7,11 +7,23 @@ partOf: budgetwatch
 imagePullSecrets: []
 podAnnotations: {}
 podLabels: {}
+podSecurityContext: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
+terminationGracePeriodSeconds: 30
 
 replicaCount: 1
+statefulSet:
+  podManagementPolicy: OrderedReady
+  revisionHistoryLimit: 10
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
 
 image:
   repository: rabbitmq
@@ -36,8 +48,10 @@ container:
   ports:
     - name: amqp
       containerPort: 5672
+      protocol: TCP
     - name: management
       containerPort: 15672
+      protocol: TCP
   volumeMounts:
     - name: rabbitmq-data
       mountPath: /var/lib/rabbitmq
@@ -66,21 +80,26 @@ startupProbe:
     command: ["rabbitmq-diagnostics", "-q", "ping"]
   initialDelaySeconds: 60
   periodSeconds: 10
+  successThreshold: 1
   timeoutSeconds: 10
   failureThreshold: 30
 
 readinessProbe:
   exec:
     command: ["rabbitmq-diagnostics", "-q", "ping"]
+  failureThreshold: 3
   initialDelaySeconds: 90
   periodSeconds: 10
+  successThreshold: 1
   timeoutSeconds: 20
 
 livenessProbe:
   exec:
     command: ["rabbitmq-diagnostics", "-q", "ping"]
+  failureThreshold: 3
   initialDelaySeconds: 120
   periodSeconds: 30
+  successThreshold: 1
   timeoutSeconds: 20
 
 resources:
@@ -98,4 +117,5 @@ persistence:
   storageClassName: csi-cinder-fast
   accessModes:
     - ReadWriteOnce
+  volumeMode: Filesystem
   size: 5Gi

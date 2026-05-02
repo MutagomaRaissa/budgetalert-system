@@ -7,6 +7,10 @@ metadata:
   labels:
     {{- include "alert-db.labels" . | nindent 4 }}
 spec:
+  podManagementPolicy: {{ .Values.statefulSet.podManagementPolicy }}
+  revisionHistoryLimit: {{ .Values.statefulSet.revisionHistoryLimit }}
+  persistentVolumeClaimRetentionPolicy:
+    {{- toYaml .Values.statefulSet.persistentVolumeClaimRetentionPolicy | nindent 4 }}
   serviceName: {{ .Values.service.name }}
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -24,12 +28,21 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+      securityContext: {{ .Values.podSecurityContext | toJson }}
       containers:
         - name: {{ .Values.container.name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            {{- toYaml .Values.container.ports | nindent 12 }}
+            {{- range .Values.container.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol | default "TCP" }}
+            {{- end }}
           envFrom:
             {{- range .Values.envFrom.configMaps }}
             - configMapRef:
@@ -45,6 +58,8 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           volumeMounts:
             {{- toYaml .Values.container.volumeMounts | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -66,6 +81,9 @@ spec:
         storageClassName: {{ .Values.persistence.storageClassName }}
         accessModes:
           {{- toYaml .Values.persistence.accessModes | nindent 10 }}
+        volumeMode: {{ .Values.persistence.volumeMode }}
         resources:
           requests:
             storage: {{ .Values.persistence.size }}
+  updateStrategy:
+    {{- toYaml .Values.statefulSet.updateStrategy | nindent 4 }}

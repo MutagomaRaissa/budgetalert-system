@@ -7,11 +7,23 @@ partOf: budgetwatch
 imagePullSecrets: []
 podAnnotations: {}
 podLabels: {}
+podSecurityContext: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
+terminationGracePeriodSeconds: 30
 
 replicaCount: 1
+statefulSet:
+  podManagementPolicy: OrderedReady
+  revisionHistoryLimit: 10
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
 
 image:
   repository: postgres
@@ -33,6 +45,7 @@ container:
   ports:
     - name: postgres
       containerPort: 5432
+      protocol: TCP
   volumeMounts:
     - name: postgres-data
       mountPath: /var/lib/postgresql/data
@@ -61,14 +74,20 @@ envFrom:
 readinessProbe:
   exec:
     command: ["pg_isready", "-U", "project_user", "-d", "project_db"]
+  failureThreshold: 3
   initialDelaySeconds: 10
   periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 1
 
 livenessProbe:
   exec:
     command: ["pg_isready", "-U", "project_user", "-d", "project_db"]
+  failureThreshold: 3
   initialDelaySeconds: 30
   periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
 
 resources:
   requests:
@@ -85,4 +104,5 @@ persistence:
   storageClassName: csi-cinder-fast
   accessModes:
     - ReadWriteOnce
+  volumeMode: Filesystem
   size: 5Gi
