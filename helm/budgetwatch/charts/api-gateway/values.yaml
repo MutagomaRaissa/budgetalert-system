@@ -1,0 +1,103 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 2
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+image:
+  repository: docker.io/rmutagoma/budgetwatch-api-gateway
+  tag: latest
+  pullPolicy: Always
+
+container:
+  name: api-gateway
+  ports:
+    - name: http
+      containerPort: 8080
+
+service:
+  name: api-gateway
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+configMap:
+  enabled: true
+  name: api-gateway-config
+  data:
+    SPRING_PROFILES_ACTIVE: prod
+    CONSUL_HOST: consul
+    CONSUL_PORT: "8500"
+    SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
+    SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: api-gateway
+    SERVER_PORT: "8080"
+    SWAGGER_BASE_URL: https://130.192.100.243/group-9
+
+secret:
+  enabled: false
+  name: api-gateway-secret
+  type: Opaque
+  stringData: {}
+
+extraSecrets: []
+
+env:
+  - name: SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+
+envFrom:
+  configMaps:
+    - api-gateway-config
+  secrets: []
+
+startupProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 30
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8080
+  initialDelaySeconds: 45
+  periodSeconds: 10
+  timeoutSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 10
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 1Gi
+    cpu: 500m

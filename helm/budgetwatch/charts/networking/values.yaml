@@ -1,0 +1,198 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+
+gateway:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: shared-gateway
+      namespace: default
+      sectionName: https
+
+routes:
+  api:
+    enabled: true
+    name: group-9-https-route
+    labelName: budgetwatch-routing
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /group-9/api
+        filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplacePrefixMatch
+                replacePrefixMatch: /api
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: api-gateway
+            port: 8080
+            weight: 1
+  dashboard:
+    enabled: true
+    name: dashboard-httproute
+    labelName: dashboard-ui
+    rules:
+      - matches:
+          - path:
+              type: Exact
+              value: /group-9
+          - path:
+              type: Exact
+              value: /group-9/
+          - path:
+              type: PathPrefix
+              value: /group-9/assets
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: dashboard-ui
+            port: 80
+            weight: 1
+  consul:
+    enabled: true
+    name: consul-httproute
+    labelName: consul
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /group-9/consul
+        filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplacePrefixMatch
+                replacePrefixMatch: /
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Forwarded-Host
+                  value: 130.192.100.243/group-9
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: X-Forwarded-Prefix
+                  value: /group-9/consul
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: consul
+            port: 8500
+            weight: 1
+  rabbitmq:
+    enabled: true
+    name: rabbitmq-httproute
+    labelName: rabbitmq
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /group-9/rabbitmq
+        filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplacePrefixMatch
+                replacePrefixMatch: /
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Forwarded-Host
+                  value: 130.192.100.243/group-9
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: X-Forwarded-Prefix
+                  value: /group-9/rabbitmq
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: rabbitmq
+            port: 15672
+            weight: 1
+  swagger:
+    enabled: true
+    name: swagger-httproute
+    labelName: swagger
+    rules:
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /group-9/gateway-docs
+        filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplacePrefixMatch
+                replacePrefixMatch: /gateway-docs
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Forwarded-Host
+                  value: 130.192.100.243/group-9
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: X-Forwarded-Prefix
+                  value: /group-9
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: api-gateway
+            port: 8080
+            weight: 1
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /group-9/swagger-ui.html
+        filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplaceFullPath
+                replaceFullPath: /swagger-ui.html
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Forwarded-Host
+                  value: 130.192.100.243/group-9
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: X-Forwarded-Prefix
+                  value: /group-9
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: api-gateway
+            port: 8080
+            weight: 1
+      - matches:
+          - path:
+              type: PathPrefix
+              value: /group-9/swagger
+        filters:
+          - type: URLRewrite
+            urlRewrite:
+              path:
+                type: ReplacePrefixMatch
+                replacePrefixMatch: /swagger
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+                - name: X-Forwarded-Host
+                  value: 130.192.100.243/group-9
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: X-Forwarded-Prefix
+                  value: /group-9
+        backendRefs:
+          - group: ""
+            kind: Service
+            name: api-gateway
+            port: 8080
+            weight: 1

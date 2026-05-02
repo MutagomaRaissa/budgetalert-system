@@ -1,0 +1,110 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 2
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+image:
+  repository: docker.io/rmutagoma/budgetwatch-coverage-service
+  tag: latest
+  pullPolicy: Always
+
+container:
+  name: coverage-service
+  ports:
+    - name: http
+      containerPort: 8082
+
+service:
+  name: coverage-service
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+      protocol: TCP
+
+configMap:
+  enabled: true
+  name: coverage-service-config
+  data:
+    SPRING_PROFILES_ACTIVE: prod
+    SPRING_DATASOURCE_URL: jdbc:postgresql://coverage-db:5432/coverage_db
+    SPRING_DATASOURCE_USERNAME: coverage_user
+    CONSUL_HOST: consul
+    CONSUL_PORT: "8500"
+    SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
+    SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: coverage-service
+    SPRING_RABBITMQ_HOST: rabbitmq
+    SPRING_RABBITMQ_PORT: "5672"
+    SPRING_RABBITMQ_USERNAME: admin
+    SERVER_PORT: "8082"
+    SPRINGDOC_SERVER_URL: https://130.192.100.243/group-9
+
+secret:
+  enabled: true
+  name: coverage-service-secret
+  type: Opaque
+  stringData:
+    SPRING_DATASOURCE_PASSWORD: password
+    SPRING_RABBITMQ_PASSWORD: password
+
+env:
+  - name: SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+
+envFrom:
+  configMaps:
+    - coverage-service-config
+  secrets:
+    - coverage-service-secret
+    - rabbitmq-secret
+
+startupProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8082
+  initialDelaySeconds: 45
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 30
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8082
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8082
+  initialDelaySeconds: 90
+  periodSeconds: 30
+  timeoutSeconds: 10
+
+resources:
+  requests:
+    memory: 768Mi
+    cpu: 300m
+  limits:
+    memory: 1536Mi
+    cpu: 750m

@@ -1,0 +1,16 @@
+apiVersion: v2
+name: alert-db
+description: Helm chart for the Budgetwatch alert database
+type: application
+version: 0.1.0
+appVersion: "15-alpine"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - postgres
+  - database
+  - alert-db
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

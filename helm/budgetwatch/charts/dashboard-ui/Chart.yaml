@@ -1,0 +1,16 @@
+apiVersion: v2
+name: dashboard-ui
+description: Helm chart for the Budgetwatch dashboard UI
+type: application
+version: 0.1.0
+appVersion: "latest"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - dashboard
+  - frontend
+  - ui
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

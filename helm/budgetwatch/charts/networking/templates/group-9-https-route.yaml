@@ -1,0 +1,18 @@
+{{- if .Values.routes.api.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Values.routes.api.name }}
+  namespace: {{ include "networking.namespace" . }}
+  labels:
+    helm.sh/chart: {{ include "networking.chart" . }}
+    app.kubernetes.io/name: {{ .Values.routes.api.labelName }}
+    app.kubernetes.io/instance: {{ include "networking.instance" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: {{ .Values.partOf }}
+spec:
+  parentRefs:
+    {{- toYaml .Values.gateway.parentRefs | nindent 4 }}
+  rules:
+    {{- toYaml .Values.routes.api.rules | nindent 4 }}
+{{- end }}

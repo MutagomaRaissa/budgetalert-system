@@ -1,0 +1,101 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 1
+
+image:
+  repository: rabbitmq
+  pullPolicy: IfNotPresent
+  tag: 3.12-management-alpine
+
+service:
+  name: rabbitmq
+  type: ClusterIP
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+      protocol: TCP
+    - name: management
+      port: 15672
+      targetPort: 15672
+      protocol: TCP
+
+container:
+  name: rabbitmq
+  ports:
+    - name: amqp
+      containerPort: 5672
+    - name: management
+      containerPort: 15672
+  volumeMounts:
+    - name: rabbitmq-data
+      mountPath: /var/lib/rabbitmq
+
+configMap:
+  enabled: true
+  name: rabbitmq-config
+  data:
+    RABBITMQ_DEFAULT_USER: admin
+
+secret:
+  enabled: true
+  name: rabbitmq-secret
+  type: Opaque
+  stringData:
+    RABBITMQ_DEFAULT_PASS: password
+
+envFrom:
+  configMaps:
+    - rabbitmq-config
+  secrets:
+    - rabbitmq-secret
+
+startupProbe:
+  exec:
+    command: ["rabbitmq-diagnostics", "-q", "ping"]
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 30
+
+readinessProbe:
+  exec:
+    command: ["rabbitmq-diagnostics", "-q", "ping"]
+  initialDelaySeconds: 90
+  periodSeconds: 10
+  timeoutSeconds: 20
+
+livenessProbe:
+  exec:
+    command: ["rabbitmq-diagnostics", "-q", "ping"]
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  timeoutSeconds: 20
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+persistence:
+  enabled: true
+  volumeClaimName: rabbitmq-data
+  mountPath: /var/lib/rabbitmq
+  storageClassName: csi-cinder-fast
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi

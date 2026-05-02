@@ -1,0 +1,79 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 1
+
+image:
+  repository: hashicorp/consul
+  pullPolicy: IfNotPresent
+  tag: "1.19"
+
+service:
+  name: consul
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8500
+      targetPort: 8500
+      protocol: TCP
+
+command:
+  - consul
+  - agent
+  - -dev
+  - -client=0.0.0.0
+
+container:
+  name: consul
+  ports:
+    - name: http
+      containerPort: 8500
+
+configMap:
+  enabled: true
+  name: consul-config
+  data:
+    CONSUL_BIND_INTERFACE: eth0
+    CONSUL_CLIENT_INTERFACE: eth0
+
+secret:
+  enabled: false
+  name: consul-secret
+  type: Opaque
+  stringData: {}
+
+envFrom:
+  configMaps:
+    - consul-config
+  secrets: []
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 200m
+
+livenessProbe:
+  httpGet:
+    path: /v1/status/leader
+    port: 8500
+  initialDelaySeconds: 10
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /v1/status/leader
+    port: 8500
+  initialDelaySeconds: 5
+  periodSeconds: 5

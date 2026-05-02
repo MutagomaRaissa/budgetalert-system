@@ -1,0 +1,16 @@
+apiVersion: v2
+name: networking
+description: Helm chart for the Budgetwatch Gateway API routes
+type: application
+version: 0.1.0
+appVersion: "gateway-api-v1"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - networking
+  - gateway-api
+  - httproute
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

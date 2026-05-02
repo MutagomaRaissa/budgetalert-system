@@ -1,0 +1,16 @@
+apiVersion: v2
+name: project-service
+description: Helm chart for the Budgetwatch project service
+type: application
+version: 0.1.0
+appVersion: "latest"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - project-service
+  - spring-boot
+  - microservice
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

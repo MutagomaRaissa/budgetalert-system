@@ -1,0 +1,88 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 1
+
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: 15-alpine
+
+service:
+  name: coverage-db
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP
+
+container:
+  name: postgres
+  ports:
+    - name: postgres
+      containerPort: 5432
+  volumeMounts:
+    - name: postgres-data
+      mountPath: /var/lib/postgresql/data
+
+configMap:
+  enabled: true
+  name: coverage-db-config
+  data:
+    POSTGRES_DB: coverage_db
+    POSTGRES_USER: coverage_user
+    PGDATA: /var/lib/postgresql/data/pgdata
+
+secret:
+  enabled: true
+  name: coverage-db-secret
+  type: Opaque
+  stringData:
+    POSTGRES_PASSWORD: password
+
+envFrom:
+  configMaps:
+    - coverage-db-config
+  secrets:
+    - coverage-db-secret
+
+readinessProbe:
+  exec:
+    command: ["pg_isready", "-U", "coverage_user", "-d", "coverage_db"]
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+livenessProbe:
+  exec:
+    command: ["pg_isready", "-U", "coverage_user", "-d", "coverage_db"]
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+
+persistence:
+  enabled: true
+  volumeClaimName: postgres-data
+  mountPath: /var/lib/postgresql/data
+  storageClassName: csi-cinder-fast
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi

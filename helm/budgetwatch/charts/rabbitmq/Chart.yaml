@@ -1,0 +1,16 @@
+apiVersion: v2
+name: rabbitmq
+description: Helm chart for the RabbitMQ broker
+type: application
+version: 0.1.0
+appVersion: "3.12-management-alpine"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - rabbitmq
+  - messaging
+  - broker
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

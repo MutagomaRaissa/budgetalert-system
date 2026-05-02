@@ -1,0 +1,16 @@
+apiVersion: v2
+name: coverage-service
+description: Helm chart for the Budgetwatch coverage service
+type: application
+version: 0.1.0
+appVersion: "latest"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - coverage-service
+  - spring-boot
+  - microservice
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

@@ -1,0 +1,88 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 1
+
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: 15-alpine
+
+service:
+  name: alert-db
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP
+
+container:
+  name: postgres
+  ports:
+    - name: postgres
+      containerPort: 5432
+  volumeMounts:
+    - name: postgres-data
+      mountPath: /var/lib/postgresql/data
+
+configMap:
+  enabled: true
+  name: alert-db-config
+  data:
+    POSTGRES_DB: alert_db
+    POSTGRES_USER: alert_user
+    PGDATA: /var/lib/postgresql/data/pgdata
+
+secret:
+  enabled: true
+  name: alert-db-secret
+  type: Opaque
+  stringData:
+    POSTGRES_PASSWORD: password
+
+envFrom:
+  configMaps:
+    - alert-db-config
+  secrets:
+    - alert-db-secret
+
+readinessProbe:
+  exec:
+    command: ["pg_isready", "-U", "alert_user", "-d", "alert_db"]
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+livenessProbe:
+  exec:
+    command: ["pg_isready", "-U", "alert_user", "-d", "alert_db"]
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+
+persistence:
+  enabled: true
+  volumeClaimName: postgres-data
+  mountPath: /var/lib/postgresql/data
+  storageClassName: csi-cinder-fast
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi

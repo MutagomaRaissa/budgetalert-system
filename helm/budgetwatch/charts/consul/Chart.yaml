@@ -1,0 +1,16 @@
+apiVersion: v2
+name: consul
+description: Helm chart for the Consul service registry
+type: application
+version: 0.1.0
+appVersion: "1.19"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - consul
+  - service-discovery
+  - infrastructure
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team

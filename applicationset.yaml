@@ -4,35 +4,33 @@ metadata:
   name: budgetalert-microservices
   namespace: argocd
 spec:
-
-  goTemplateOptions: ["missingkey=error"]
   generators:
-    - git:
-        repoURL: https://github.com/MutagomaRaissa/budgetalert-system.git
-        revision: iac
-        directories:
-          - path: "iac/*"
+    - list:
+        elements:
+          - name: budgetwatch
+            chartPath: helm/budgetwatch
   template:
     metadata:
-      name: "budgetalert-{{path.basename}}"
+      name: "{{name}}"
       namespace: argocd
       labels:
-        app.kubernetes.io/part-of: budgetalert
+        app.kubernetes.io/part-of: budgetwatch
         app.kubernetes.io/managed-by: argocd
     spec:
       project: raissa
       source:
         repoURL: https://github.com/MutagomaRaissa/budgetalert-system.git
         targetRevision: iac
-        path: "{{path}}"
-        directory:
-          recurse: true
+        path: "{{chartPath}}"
+        helm:
+          releaseName: budgetwatch
       destination:
         server: https://kubernetes.default.svc
         namespace: group-9
       syncPolicy:
         automated:
           prune: true
+          selfHeal: true
         syncOptions:
           - ApplyOutOfSyncOnly=true
           - CreateNamespace=true

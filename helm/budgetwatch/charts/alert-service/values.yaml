@@ -1,0 +1,111 @@
+enabled: true
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+instanceOverride: ""
+partOf: budgetwatch
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+replicaCount: 2
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+image:
+  repository: docker.io/rmutagoma/budgetwatch-alert-service
+  tag: latest
+  pullPolicy: Always
+
+container:
+  name: alert-service
+  ports:
+    - name: http
+      containerPort: 8083
+
+service:
+  name: alert-service
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+      protocol: TCP
+
+configMap:
+  enabled: true
+  name: alert-service-config
+  data:
+    SPRING_PROFILES_ACTIVE: prod
+    SPRING_DATASOURCE_URL: jdbc:postgresql://alert-db:5432/alert_db
+    SPRING_DATASOURCE_USERNAME: alert_user
+    CONSUL_HOST: consul
+    CONSUL_PORT: "8500"
+    SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
+    SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: alert-service
+    SPRING_RABBITMQ_HOST: rabbitmq
+    SPRING_RABBITMQ_PORT: "5672"
+    SPRING_RABBITMQ_USERNAME: admin
+    SERVER_PORT: "8083"
+    SPRINGDOC_SERVER_URL: https://130.192.100.243/group-9
+
+secret:
+  enabled: true
+  name: alert-service-secret
+  type: Opaque
+  stringData:
+    SPRING_DATASOURCE_PASSWORD: password
+    SPRING_RABBITMQ_PASSWORD: password
+
+env:
+  - name: SPRING_CLOUD_CONSUL_DISCOVERY_INSTANCE_ID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+
+envFrom:
+  configMaps:
+    - alert-service-config
+  secrets:
+    - alert-service-secret
+    - rabbitmq-secret
+    - jwt-secret
+
+startupProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8083
+  initialDelaySeconds: 45
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 30
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8083
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8083
+  initialDelaySeconds: 90
+  periodSeconds: 30
+  timeoutSeconds: 10
+
+resources:
+  requests:
+    memory: 768Mi
+    cpu: 300m
+  limits:
+    memory: 1536Mi
+    cpu: 750m

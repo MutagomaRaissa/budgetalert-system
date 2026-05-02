@@ -1,0 +1,37 @@
+global:
+  # Keep this aligned with applicationset.yaml. Kubernetes namespaces cannot contain underscores,
+  # so the deployable namespace is group-9, not group_9.
+  namespace: group-9
+
+alert-db:
+  enabled: true
+
+alert-service:
+  enabled: true
+
+api-gateway:
+  enabled: true
+
+consul:
+  enabled: true
+
+coverage-db:
+  enabled: true
+
+coverage-service:
+  enabled: true
+
+dashboard-ui:
+  enabled: true
+
+networking:
+  enabled: true
+
+project-db:
+  enabled: true
+
+project-service:
+  enabled: true
+
+rabbitmq:
+  enabled: true

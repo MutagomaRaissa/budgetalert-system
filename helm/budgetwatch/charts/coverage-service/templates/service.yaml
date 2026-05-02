@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ include "coverage-service.namespace" . }}
+  labels:
+    {{- include "coverage-service.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "coverage-service.selectorLabels" . | nindent 4 }}
+  ports:
+    {{- toYaml .Values.service.ports | nindent 4 }}

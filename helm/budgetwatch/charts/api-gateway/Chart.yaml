@@ -1,0 +1,16 @@
+apiVersion: v2
+name: api-gateway
+description: Helm chart for the Budgetwatch API gateway
+type: application
+version: 0.1.0
+appVersion: "latest"
+home: https://github.com/MutagomaRaissa/budgetalert-system
+keywords:
+  - budgetwatch
+  - api-gateway
+  - spring-boot
+  - microservice
+sources:
+  - https://github.com/MutagomaRaissa/budgetalert-system
+maintainers:
+  - name: Budgetwatch Team
