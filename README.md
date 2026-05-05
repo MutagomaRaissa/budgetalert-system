@@ -1,16 +1,14 @@
-# Budget Alert Platform
+Budget Alert is a cloud-ready budget monitoring platform built with a microservices architecture.
 
-Monorepo containing:
-- api-gateway
-- project-service
-- coverage-service
-- alert-service
-- dashboard-ui
-- docker-compose.yml
+The system separates responsibilities across dedicated services:
 
-## Architecture
-
-Project Service owns users, projects, resources.
-Coverage Service computes forecasted cost and publishes budget alert events to RabbitMQ.
-Alert Service consumes alert events, stores them.
-API Gateway fronts all backend services and proxies Swagger docs.
+Project Service manages users, projects, and resources.
+Coverage Service calculates budget coverage and publishes alert events.
+Alert Service consumes and stores alerts.
+API Gateway centralizes routing.
+Dashboard UI provides the user interface.
+Consul enables service discovery.
+RabbitMQ enables asynchronous communication.
+PostgreSQL provides isolated persistence for each service.
+Manifests for declarative Kubernetes deployment 
+Helm and Argo CD support Kubernetes GitOps deployment.
