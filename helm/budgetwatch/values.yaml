@@ -1,6 +1,5 @@
 global:
-  # Keep this aligned with applicationset.yaml. Kubernetes namespaces cannot contain underscores,
-  # so the deployable namespace is group-9, not group_9.
+
   namespace: group-9
 
 alert-db:
