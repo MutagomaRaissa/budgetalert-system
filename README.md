@@ -10,5 +10,5 @@ Dashboard UI provides the user interface.
 Consul enables service discovery.
 RabbitMQ enables asynchronous communication.
 PostgreSQL provides isolated persistence for each service.
-Manifests for declarative Kubernetes deployment 
+Manifests for declarative Kubernetes deployment.
 Helm and Argo CD support Kubernetes GitOps deployment.
