@@ -17,34 +17,45 @@ maintainers:
 dependencies:
   - name: alert-db
     version: 0.1.0
+    repository: "file://./charts/alert-db"
     condition: alert-db.enabled
   - name: alert-service
     version: 0.1.0
+    repository: "file://./charts/alert-service"
     condition: alert-service.enabled
   - name: api-gateway
     version: 0.1.0
+    repository: "file://./charts/api-gateway"
     condition: api-gateway.enabled
   - name: consul
     version: 0.1.0
+    repository: "file://./charts/consul"
     condition: consul.enabled
   - name: coverage-db
     version: 0.1.0
+    repository: "file://./charts/coverage-db"
     condition: coverage-db.enabled
   - name: coverage-service
     version: 0.1.0
+    repository: "file://./charts/coverage-service"
     condition: coverage-service.enabled
   - name: dashboard-ui
     version: 0.1.0
+    repository: "file://./charts/dashboard-ui"
     condition: dashboard-ui.enabled
   - name: networking
     version: 0.1.0
+    repository: "file://./charts/networking"
     condition: networking.enabled
   - name: project-db
     version: 0.1.0
+    repository: "file://./charts/project-db"
     condition: project-db.enabled
   - name: project-service
     version: 0.1.0
+    repository: "file://./charts/project-service"
     condition: project-service.enabled
   - name: rabbitmq
     version: 0.1.0
+    repository: "file://./charts/rabbitmq"
     condition: rabbitmq.enabled
